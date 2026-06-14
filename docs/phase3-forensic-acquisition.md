@@ -15,7 +15,7 @@ with cryptographic hashes that guarantee their integrity throughout the process.
 Hash values (MD5 and SHA256) were calculated for the raw image immediately after
 creation and verified with `md5sum -c` and `sha256sum -c`. The image was then
 converted to the E01 format using `ewfacquire` with case metadata. The E01 was
-verified with `ewfverify -d sha256`. All three files were confirmed in `evidences/`.
+verified with `ewfverify -d sha256`. All three files were confirmed locally.
 
 ## Commands Executed
 
@@ -62,12 +62,25 @@ E01 acquisition parameters used:
 - EWF format: EnCase 6 (.E01)
 - Compression: deflate / none
 
-Files confirmed in `evidences/`:
-```
-evidence.dd       200MB   raw forensic image
-evidence_e01.E01  201MB   EnCase format image
-evidence.md5      144B    MD5 + SHA256 hashes
-```
+### Files Generated in `evidences/`
+
+| File | Size | Status in repository |
+|---|---|---|
+| `evidence.dd` | 200 MB | **Not tracked** — exceeds GitHub's 100MB limit |
+| `evidence_e01.E01` | 201 MB | **Not tracked** — exceeds GitHub's 100MB limit |
+| `evidence.md5` | 144 B | Tracked — contains MD5 and SHA256 hashes |
+
+`evidence.dd` and `evidence_e01.E01` are excluded via `.gitignore` and are not
+present in this repository. This was a deliberate decision: GitHub enforces a
+100MB file size limit and these forensic images cannot be split without losing
+their forensic validity.
+
+The `evidence.md5` file is tracked and serves as the permanent chain of custody
+record — anyone reproducing this investigation locally can verify their generated
+image against the original hashes.
+
+For reproduction instructions and hash verification, see
+[`evidences/NOTES.md`](../evidences/NOTES.md).
 
 ## Key Concepts
 

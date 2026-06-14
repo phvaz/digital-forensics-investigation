@@ -88,8 +88,8 @@ SYNTHETIC EVIDENCE
       ▼
 ┌─────────────────────────────────────────┐
 │         ACQUISITION PHASE               │
-│  dd → evidencia.dd                      │
-│  ewfacquire → evidencia.E01             │
+│  dd → evidence.dd                       │
+│  ewfacquire → evidence_e01.E01          │
 │  md5sum / sha256sum → hashes            │
 └─────────────────┬───────────────────────┘
                   │
@@ -169,12 +169,12 @@ A 200MB raw disk image was created using `dd`, partitioned, formatted as ext4, a
 
 ```bash
 # Create 200MB blank image
-dd if=/dev/zero of=evidencias/evidencia.dd bs=1M count=200 status=progress
+dd if=/dev/zero of=evidences/evidence.dd bs=1M count=200 status=progress
 
 # Partition and format
-parted evidencias/evidencia.dd mklabel msdos
-parted evidencias/evidencia.dd mkpart primary ext4 1MiB 199MiB
-sudo losetup -Pf evidencias/evidencia.dd
+parted evidences/evidence.dd mklabel msdos
+parted evidences/evidence.dd mkpart primary ext4 1MiB 199MiB
+sudo losetup -Pf evidences/evidence.dd
 sudo mkfs.ext4 /dev/loop0p1
 sudo mount /dev/loop0p1 /mnt/forense
 
@@ -204,14 +204,23 @@ Acquisition is the most critical phase. Any modification to the original evidenc
 
 ```bash
 # Generate hashes for chain of custody
-md5sum evidencias/evidencia.dd > evidencias/evidencia.md5
-sha256sum evidencias/evidencia.dd >> evidencias/evidencia.md5
+md5sum evidences/evidence.dd > evidences/evidence.md5
+sha256sum evidences/evidence.dd >> evidences/evidence.md5
+
+# Verify integrity
+md5sum -c evidences/evidence.md5
+sha256sum -c evidences/evidence.md5
 
 # Convert to E01 format
-ewfacquire evidencias/evidencia.dd -t evidencias/evidencia_e01
+ewfacquire evidences/evidence.dd -t evidences/evidence_e01
+
+# Verify E01
+ewfverify -d sha256 evidences/evidence_e01.E01
 ```
 
 > The `.dd` format is universal and compatible with all tools. The `.E01` (EnCase Evidence File) adds case metadata, compression, and internal integrity verification — standard in legally accepted forensic reports.
+
+> **Note:** `evidence.dd` and `evidence_e01.E01` are not tracked in this repository due to GitHub's 100MB file size limit. See [`evidences/NOTES.md`](evidences/NOTES.md) for reproduction instructions and hash verification.
 
 📄 Full documentation: [docs/phase3-forensic-acquisition.md](docs/phase3-forensic-acquisition.md)
 
@@ -223,22 +232,22 @@ TSK is the forensic engine that Autopsy uses internally. Running it directly fro
 
 ```bash
 # Identify partitions and offsets
-mmls evidencias/evidencia.dd
+mmls evidences/evidence.dd
 
-# List all files including deleted (marked with *)
-fls -o 2048 evidencias/evidencia.dd
+# List all files including deleted
+fls -r -o 2048 evidences/evidence.dd
 
-# List only deleted files
-fls -d -o 2048 evidencias/evidencia.dd
+# Inspect inode metadata
+istat -o 2048 evidences/evidence.dd 13
 
-# Recover deleted file by inode number
-icat -o 2048 evidencias/evidencia.dd 13 > recuperados/transfer_receipt_recovered.txt
+# Attempt content recovery by inode
+icat -o 2048 evidences/evidence.dd 13 > recovered/transfer_receipt_recovered.txt
 
 # Search for patterns in the binary image
-strings evidencias/evidencia.dd | grep -i "PIX"
+strings evidences/evidence.dd | grep -i "PIX"
 
 # Extract unallocated space
-blkls -o 2048 evidencias/evidencia.dd > analise/unallocated.raw
+blkls -o 2048 evidences/evidence.dd > analysis/unallocated.raw
 ```
 
 📄 Full documentation: [docs/phase4-tsk-analysis.md](docs/phase4-tsk-analysis.md)
@@ -251,10 +260,10 @@ Carving recovers files directly from binary disk data, without relying on the fi
 
 ```bash
 # Carving by file signature (magic number)
-foremost -i evidencias/evidencia.dd -o recuperados/foremost -v
+foremost -i evidences/evidence.dd -o recovered/foremost -v
 
 # Check what was recovered
-cat recuperados/foremost/audit.txt
+cat recovered/foremost/audit.txt
 ```
 
 > Every file format has specific bytes at the start that identify its true type regardless of extension. JPEG files always begin with `FF D8 FF`. Foremost uses these signatures to locate and reconstruct files even without a file system structure.
@@ -269,8 +278,8 @@ Metadata is data about data. In image files, the EXIF standard can reveal when, 
 
 ```bash
 # Full EXIF metadata analysis
-exiftool recuperados/foremost/png/meeting_photo.png > metadados/exiftool_output.txt
-cat metadados/exiftool_output.txt
+exiftool recovered/foremost/png/00020486.png > metadata/exiftool_output.txt
+cat metadata/exiftool_output.txt
 ```
 
 📄 Full documentation: [docs/phase6-exif-metadata.md](docs/phase6-exif-metadata.md)
@@ -283,7 +292,7 @@ The forensic timeline is the chronological reconstruction of all events recorded
 
 ```bash
 # Generate bodyfile with all timestamps (MACB)
-fls -m / -r -o 2048 evidencias/evidencia.dd > timeline/bodyfile.txt
+fls -m / -r -o 2048 evidences/evidence.dd > timeline/bodyfile.txt
 
 # Generate chronological timeline
 mactime -b timeline/bodyfile.txt > timeline/timeline.txt
@@ -302,7 +311,7 @@ Autopsy consolidates graphically everything done manually in the previous phases
 **Procedure:**
 1. Open Autopsy → `New Case`
 2. Fill in: Case Name, Base Directory, Examiner
-3. `Add Data Source` → `Disk Image or VM File` → select `evidencia.dd`
+3. `Add Data Source` → `Disk Image or VM File` → select `evidence.dd`
 4. Enable Ingest Modules: Hash Lookup, Recent Activity, Keyword Search, File Type Identification, Embedded File Extractor, EXIF Parser
 5. Wait for full processing
 6. Explore: Data Sources, Deleted Files, Extracted Content, Keyword Hits, Timeline
@@ -352,23 +361,26 @@ digital-forensics-investigation/
 │   ├── phase8-autopsy.md
 │   └── phase9-forensic-report.md
 │
-├── evidencias/
-│   ├── evidencia.dd                 ← raw forensic image
-│   ├── evidencia_e01.E01            ← EnCase format image
-│   └── evidencia.md5                ← integrity hashes
+├── evidences/
+│   ├── evidence.dd                  ← raw forensic image (not tracked — see NOTES.md)
+│   ├── evidence_e01.E01             ← EnCase format image (not tracked — see NOTES.md)
+│   ├── evidence.md5                 ← integrity hashes (MD5 + SHA256)
+│   └── NOTES.md                     ← explains missing files and reproduction instructions
 │
-├── analise/
+├── analysis/
 │   ├── mmls_output.txt              ← identified partitions
-│   ├── fls_output.txt               ← file listing
-│   ├── fls_deleted.txt              ← deleted files
+│   ├── fls_output.txt               ← file listing including deleted
+│   ├── fls_deleted.txt              ← deleted files only
 │   ├── strings_grep.txt             ← pattern search results
-│   └── unallocated.raw              ← extracted unallocated space
+│   └── unallocated.raw              ← extracted unallocated space (not tracked — see NOTES.md)
 │
-├── recuperados/
-│   ├── transfer_receipt_recovered.txt
+├── recovered/
 │   └── foremost/                    ← carving results
+│       ├── audit.txt
+│       └── png/
+│           └── 00020486.png
 │
-├── metadados/
+├── metadata/
 │   └── exiftool_output.txt          ← extracted EXIF metadata
 │
 ├── timeline/
@@ -376,16 +388,13 @@ digital-forensics-investigation/
 │   └── timeline.txt                 ← chronological timeline
 │
 ├── screenshots/
-│   ├── phase1_apt_install.png
-│   ├── phase1_tool_versions.png
-│   ├── phase2_dd_creation.png
-│   ├── phase2_parted.png
-│   ├── phase2_files_created.png
-│   ├── phase2_files_deleted.png
-│   └── phase2_unmount.png
+│   └── phase[1-8]_*.png             ← one screenshot per step per phase
 │
 └── laudo/
-    └── forensic_report.pdf          ← final report
+    ├── forensic_report.pdf          ← final forensic report
+    └── autopsy_report/              ← full Autopsy HTML report
+        ├── report.html
+        └── content/
 ```
 
 ---

@@ -1,0 +1,18 @@
+inode: 13
+Not Allocated
+Group: 0
+Generation Id: 3586743513
+uid / gid: 0 / 0
+mode: rrw-r--r--
+Flags: Extents, 
+size: 0
+num of links: 0
+
+Inode Times:
+Accessed:	2026-06-07 12:26:08.504110112 (EDT)
+File Modified:	2026-06-07 12:33:09.968275341 (EDT)
+Inode Modified:	2026-06-07 12:33:09.968275341 (EDT)
+File Created:	2026-06-07 12:26:08.504110112 (EDT)
+Deleted:	2026-06-07 12:33:09 (EDT)
+
+Direct Blocks:

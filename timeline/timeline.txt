@@ -1,0 +1,7 @@
+Sun Jun 07 2026 12:12:15    12288 macb d/drwx------ 0        0        11       /lost+found
+Sun Jun 07 2026 12:26:08        0 .a.b -/rrw-r--r-- 0        0        13       /$OrphanFiles/OrphanFile-13 (deleted)
+Sun Jun 07 2026 12:27:03        0 .a.b -/rrw-r--r-- 0        0        14       /$OrphanFiles/OrphanFile-14 (deleted)
+Sun Jun 07 2026 12:29:38      442 macb r/rrw-r--r-- 0        0        15       /foto_reuniao.png
+Sun Jun 07 2026 12:32:00      233 macb r/rrw-r--r-- 0        0        16       /log_sistema.log
+Sun Jun 07 2026 12:33:09        0 m.c. -/rrw-r--r-- 0        0        13       /$OrphanFiles/OrphanFile-13 (deleted)
+                                0 m.c. -/rrw-r--r-- 0        0        14       /$OrphanFiles/OrphanFile-14 (deleted)

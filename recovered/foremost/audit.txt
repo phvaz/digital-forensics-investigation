@@ -1,0 +1,23 @@
+Foremost version 1.5.7 by Jesse Kornblum, Kris Kendall, and Nick Mikus
+Audit File
+
+Foremost started at Tue Jun  9 17:41:10 2026
+Invocation: foremost -i evidences/evidence.dd -o recovered/foremost -v 
+Output directory: /media/sf_forense-digital-completo/recovered/foremost
+Configuration file: /etc/foremost.conf
+------------------------------------------------------------------
+File: evidences/evidence.dd
+Start: Tue Jun  9 17:41:10 2026
+Length: 200 MB (209715200 bytes)
+ 
+Num	 Name (bs=512)	       Size	 File Offset	 Comment 
+
+0:	00020486.png 	      442 B 	   10488832 	  (640 x 480)
+Finish: Tue Jun  9 17:41:16 2026
+
+1 FILES EXTRACTED
+	
+png:= 1
+------------------------------------------------------------------
+
+Foremost finished at Tue Jun  9 17:41:16 2026

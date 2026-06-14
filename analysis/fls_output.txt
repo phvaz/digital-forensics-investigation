@@ -1,0 +1,6 @@
+d/d 11:	lost+found
+r/r 15:	foto_reuniao.png
+r/r 16:	log_sistema.log
+V/V 51001:	$OrphanFiles
++ -/r * 13:	OrphanFile-13
++ -/r * 14:	OrphanFile-14

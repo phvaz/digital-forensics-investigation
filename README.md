@@ -390,7 +390,7 @@ digital-forensics-investigation/
 ├── screenshots/
 │   └── phase[1-8]_*.png             ← one screenshot per step per phase
 │
-└── laudo/
+└── report/
     ├── forensic_report.pdf          ← final forensic report
     └── autopsy_report/              ← full Autopsy HTML report
         ├── report.html

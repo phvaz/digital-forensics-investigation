@@ -1,12 +1,13 @@
-# fls -d output — no results returned
-#
-# Command: fls -d -o 2048 evidences/evidence.dd
-#
-# fls -d lists only files whose directory entries are marked as deleted.
-# No output was returned because the VirtualBox shared folder (vboxsf)
-# zeroes directory entries at deletion time, making deleted files invisible
-# to fls -d.
-#
-# Deleted files were successfully identified using fls -r instead,
-# which revealed orphan inodes 13 and 14 under $OrphanFiles.
-# See fls_output.txt for the full output including orphan files.
+fls -d output — no results returned
+
+Command: fls -d -o 2048 evidences/evidence.dd
+
+fls -d lists only files whose directory entries are marked as deleted.
+No output was returned because the VirtualBox shared folder (vboxsf)
+zeroes directory entries at deletion time, making deleted files invisible
+to fls -d.
+
+Deleted files were successfully identified using fls -r instead,
+which revealed orphan inodes 13 and 14 under $OrphanFiles.
+See fls_output.txt for the full output including orphan files.
+
